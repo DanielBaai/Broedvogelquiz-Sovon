@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Broedvogelquiz - Sovon MUS</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 2rem; background: #eef7f2; }
+    .quiz-container { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
+    img, audio { margin-top: 1rem; max-width: 100%; border-radius: 0.5rem; }
+    input { margin-top: 1rem; padding: 0.5rem; font-size: 1rem; width: 80%; border-radius: 0.5rem; border: 1px solid #ccc; }
+    button { margin-top: 1rem; padding: 0.7rem 1.5rem; font-size: 1rem; background-color: #2c7a7b; color: white; border: none; border-radius: 0.5rem; cursor: pointer; }
+    button:hover { background-color: #285e61; }
+    .result { margin-top: 1rem; font-size: 1.2rem; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>Broedvogelquiz - Sovon MUS</h1>
+    <div id="media"></div>
+    <input type="text" id="answer" placeholder="Welke vogel is dit?">
+    <br>
+    <button onclick="checkAnswer()">Antwoord</button>
+    <div class="result" id="result"></div>
+    <div class="result" id="score"></div>
+  </div>
+
+  <script>
+    const vogels = [
+      {
+        naam: "blauwe reiger",
+        type: "foto",
+        media: "https://upload.wikimedia.org/wikipedia/commons/5/5e/Ardea_cinerea1.jpg"
+      },
+      {
+        naam: "boomklever",
+        type: "geluid",
+        media: "https://xeno-canto.org/sounds/uploaded/NMWECWXONZ/XC686771-2023-03-19%2009h45%20Boomklever.mp3"
+      },
+      {
+        naam: "fitis",
+        type: "foto",
+        media: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Phylloscopus_trochilus.jpg"
+      },
+      {
+        naam: "houtduif",
+        type: "geluid",
+        media: "https://xeno-canto.org/sounds/uploaded/OOECXBYGXQ/XC686887-2023-03-18%2017h37%20Houtduif.mp3"
+      }
+    ];
+
+    let score = 0;
+    let currentVogel = {};
+
+    function normaliseer(text) {
+      return text.toLowerCase().replace(/[^a-z]/g, "").trim();
+    }
+
+    function kiesNieuweVogel() {
+      const index = Math.floor(Math.random() * vogels.length);
+      currentVogel = vogels[index];
+
+      const mediaDiv = document.getElementById("media");
+      mediaDiv.innerHTML = "";
+
+      if (currentVogel.type === "foto") {
+        mediaDiv.innerHTML = `<img src="${currentVogel.media}" alt="Vogel">`;
+      } else if (currentVogel.type === "geluid") {
+        mediaDiv.innerHTML = `<audio controls src="${currentVogel.media}"></audio>`;
+      } else if (currentVogel.type === "beide") {
+        mediaDiv.innerHTML = `<img src="${currentVogel.media.foto}" alt="Vogel"><br><audio controls src="${currentVogel.media.geluid}"></audio>`;
+      }
+
+      document.getElementById("answer").value = "";
+      document.getElementById("result").textContent = "";
+    }
+
+    function checkAnswer() {
+      const input = document.getElementById("answer").value;
+      if (normaliseer(input) === normaliseer(currentVogel.naam)) {
+        score++;
+        document.getElementById("result").textContent = "Goed!";
+        document.getElementById("score").textContent = `Score: ${score}`;
+        setTimeout(kiesNieuweVogel, 1000);
+      } else {
+        document.getElementById("result").textContent = `Fout! Het juiste antwoord was: ${currentVogel.naam}`;
+        document.getElementById("score").textContent = `Eindscore: ${score}`;
+        score = 0;
+      }
+    }
+
+    kiesNieuweVogel();
+  </script>
+</body>
+</html>
